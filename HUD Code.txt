@@ -1,0 +1,171 @@
+/*
+ * OpenWebcam.cpp
+ *
+ *  Created on: Oct 26, 2015
+ *      Author: Brandon
+ *
+ * This Program Should Open the Webcam on my Laptop
+ * It then also prints out some strings
+ *
+ */
+
+#include "opencv2/opencv.hpp"
+#include <windows.h>
+#include <cstdlib>
+
+using namespace cv;
+using namespace std;
+
+int deadman = 0;
+
+int main(int argc, char** argv)
+{
+    VideoCapture cap;
+    // open the default camera, use something different from 0 otherwise;
+    // Check VideoCapture documentation.
+    if(!cap.open(0))
+        return 0;
+    for(;;)
+    {
+          ///Create a the image to fit the video on
+          Mat frame;
+          cap >> frame; ///get a new frame for the video
+
+          ///Create the vector for finding the RGB Values
+          Vec3b intensity = frame.at<Vec3b>(50,75);
+          int blue = intensity.val[0];
+          int green = intensity.val[1];
+          int red = intensity.val[2];
+
+          Vec3b intensity1 = frame.at<Vec3b>(125, 50);
+          int blue2 = intensity1.val[0];
+          int green2 = intensity1.val[1];
+          int red2 = intensity1.val[2];
+/*
+   for testing purposes only
+         cout<<blue<<endl;
+         cout<<green<<endl;
+         cout<<red<<endl;
+         cout<<endl;
+*/
+         // Sleep(100);
+
+            ///Random Number Generator 1
+            int v1 = rand() % 100;
+            String Result;          // string which will contain the result
+            std::ostringstream convert;   // stream used for the conversion
+            convert << v1;      // insert the textual representation of
+                               //'Number' in the characters in the stream
+
+            Result = convert.str(); // set 'Result' to the contents of the stream
+
+SHORT spaceBar = GetKeyState(VK_SPACE);
+Sleep(100);
+            if( spaceBar == true)
+            {
+              deadman = -1;
+            }
+            else
+            {
+              deadman = 0;
+            }
+/*
+            while (spaceBar == true)
+            {
+              deadman = -1;
+            }
+
+            */
+            ///Test Circle
+            circle(frame,
+                     Point (100,225), //center
+                     50, // Radius
+                     Scalar (0,255,0), //Color
+                     deadman,
+                     8);
+
+            ///Color Changer
+            int xpoint = 255;
+            int ypoint = 255;
+            int zpoint = 255;
+
+            if(blue<75 && green<75 && red<75)
+              {
+                xpoint = 255;
+                ypoint = 255;
+                zpoint = 255;
+              }
+            else if (blue>180 && green>180 && red>180)
+              {
+                xpoint = 25;
+                ypoint = 25;
+                zpoint = 25;
+              }
+            else
+              {
+                xpoint = 235;
+                ypoint = 235;
+                zpoint = 235;
+              }
+
+            ///Test 1
+            putText(frame,
+                    Result,
+                    Point(50,75),
+                    2,
+                    2,
+                    Scalar(xpoint,ypoint,zpoint),
+                    3,
+                    8,
+                    false);
+
+            ///Random number generator 2
+            int v2 = rand() % 5;
+            String Result1;
+            std::ostringstream Myconvert;
+            Myconvert << v2;
+            Result1 = Myconvert.str();
+
+            ///Color Changer
+                        int xpoint2 = 255;
+                        int ypoint2 = 255;
+                        int zpoint2 = 255;
+
+                        if(blue2<75 && green2<75 && red2<75)
+                          {
+                            xpoint2 = 255;
+                            ypoint2 = 255;
+                            zpoint2 = 255;
+                          }
+                        else if (blue2>180 && green2>180 && red2>180)
+                          {
+                            xpoint2 = 25;
+                            ypoint2 = 25;
+                            zpoint2 = 25;
+                          }
+                        else
+                          {
+                            xpoint2 = 235;
+                            ypoint2 = 235;
+                            zpoint2 = 235;
+                          }
+
+            ///test text 2
+            putText(
+                    frame,
+                    Result1,
+                    Point(50,150),
+                    2,
+                    2,
+                    Scalar(xpoint2,ypoint2,zpoint2),
+                    3,
+                    8,
+                    false );
+
+          if( frame.empty() ) break; // end of video stream
+          imshow("Test HUD", frame);
+          if( waitKey(1) == 27 ) break; // stop capturing by pressing ESC
+    }
+    // the camera will be closed automatically upon exit
+    return 0;
+}
